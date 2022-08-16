@@ -1,5 +1,5 @@
 ```bash
-!gdown --id 1KRRME_NtRG-iWOyLAb7gE-eA8fTeyzUR
-!unzip CamVid.zip
-!rm -rf CamVid.zip
+!gdown --id 1q_Q0BAhXPOyMleZ_n6KhHRO4qpWYi1Ev
+!unzip --qq Figaro_1k.zip
+!rm -rf Figaro_1k.zip
 ```
