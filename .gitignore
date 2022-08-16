@@ -1,6 +1,6 @@
 *jpg
 *png
-.idea
+.idea/
 *.DS_Store
 Figaro_1k/
 checkpoints/
