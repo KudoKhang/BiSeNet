@@ -30,6 +30,7 @@ def val(model, dataloader, NUM_CLASSES=2, device='cpu'):
     hist = np.zeros((NUM_CLASSES, NUM_CLASSES))
 
     with torch.no_grad():
+        model.to(device)
         model.eval()
         print('Starting validate')
 
