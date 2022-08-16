@@ -6,9 +6,8 @@ NUM_CLASSES = 2
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
+model.load_state_dict(torch.load('checkpoints/best_model.pth', map_location=torch.device(DEVICE)))
 model = model.to(DEVICE)
-model.load_state_dict(torch.load('checkpoints/lastest_model.pth'))
-
 dataset_test = FigaroDataset('Figaro_1k/', mode='test')
 dataloader_test = DataLoader(
     dataset_test,
@@ -23,7 +22,6 @@ def img_show(img):
     fig = plt.figure()
     plt.imshow(img, interpolation='nearest')
     plt.show()
-
 
 def test_single_image(model, dataset_test, index):
     test_image, test_label = dataset_test.__getitem__(index)

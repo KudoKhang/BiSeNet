@@ -8,6 +8,7 @@ def get_args():
     parser.add_argument("--num_classes", type=int, default=2, help="")
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--epoch", type=int, default=200)
+    parser.add_argument("--pretrained", type=str, default='checkpoints/lastest_model.pth')
     args = parser.parse_args()
     print("           ⊱ ──────ஓ๑♡๑ஓ ────── ⊰")
     print("🎵 hhey, arguments are here if you need to check 🎵")
@@ -17,6 +18,12 @@ def get_args():
     return args
 
 args = get_args()
+
+if os.path.exists(args.pretrained):
+    checkpoint = torch.load(args.pretrained)
+    model.load_state_dict(checkpoint['state_dict'])
+    start_epoch = checkpoint['epoch']
+    print('Resume training from {}, start at epoch: {}'.format(args.pretrained, start_epoch))
 
 # Training
 EPOCHS = args.epoch
@@ -93,13 +100,24 @@ for epoch in range(EPOCHS):
         os.makedirs('checkpoints/', exist_ok=True)
 
     if epoch % CHECKPOINT_STEP == 0:
-        torch.save(model.state_dict(), 'checkpoints/lastest_model.pth')
+        states = {
+            'epoch': epoch + 1,
+            'state_dict': model.state_dict()
+        }
+        # torch.save(model.state_dict(), 'checkpoints/lastest_model.pth')
+        torch.save(states, 'checkpoints/lastest_model.pth')
 
     # Validate save best model
     # Save checkpoint
     if epoch % VALIDATE_STEP == 0:
+        model.load_state_dict(torch.load('checkpoints/lastest_model.pth'))
         _, mean_iou = val(model, dataloader_val, NUM_CLASSES, DEVICE)
         if mean_iou > max_miou:
             max_miou = mean_iou
-            print('Save best model with mIoU = {}'.format(mean_iou))
-            torch.save(model.state_dict(), 'checkpoints/best_model.pth')
+            print('Save best model with mIoU = {} \n'.format(mean_iou))
+            states = {
+                'epoch': epoch + 1,
+                'state_dict': model.state_dict()
+            }
+            # torch.save(model.state_dict(), 'checkpoints/best_model.pth')
+            torch.save(states, 'checkpoints/best_model.pth')

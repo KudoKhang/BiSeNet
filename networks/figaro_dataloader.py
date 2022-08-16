@@ -6,12 +6,12 @@ class FigaroDataset(Dataset):
     color_encoding = [
         ('hair', (255, 255, 255)),
     ]
-    def __init__(self, path_dataset, mode='train', num_classes=2, device='cpu', img_size=(480, 480)):
+    def __init__(self, path_dataset, mode='train', num_classes=2, device='cpu', img_size=(480, 360)):
         self.mode = mode
         self.device = device
         self.path_dataset = path_dataset
         self.num_classes = num_classes
-        self.img_size = img_size
+        self.img_size = img_size # TODO: utils/estimate_size.py
         # Normailization
         self.normalize = transforms.Compose([
             transforms.Resize(img_size),
@@ -88,7 +88,7 @@ class FigaroDataset(Dataset):
 
         # Apply normalization in img
         img = self.normalize(img)
-        label = cv2.resize(label, self.img_size)
+        label = cv2.resize(label, self.img_size[::-1])
         # Convert label for cross entropy
         label = self.label_for_cross_entropy(label)[:,:,0]
         label = torch.from_numpy(label).long()
