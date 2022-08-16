@@ -16,3 +16,5 @@ import torch.cuda
 from matplotlib import pyplot as plt
 import cv2
 import argparse
+import warnings
+warnings.filterwarnings('ignore')

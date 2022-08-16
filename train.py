@@ -69,8 +69,8 @@ for epoch in range(EPOCHS):
     max_miou = 0
 
     for i, (data, label) in enumerate(dataloader_train):
-        data = data.cpu()
-        label = label.cpu()
+        data = data.to(DEVICE)
+        label = label.to(DEVICE)
         output, output_sup1, output_sup2 = model(data)
         loss1 = loss_func(output, label)
         loss2 = loss_func(output_sup1, label)
