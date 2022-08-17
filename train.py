@@ -9,6 +9,8 @@ def get_args():
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--epoch", type=int, default=200)
     parser.add_argument("--pretrained", type=str, default='checkpoints/lastest_model.pth')
+    parser.add_argument("--lr", type=float, default=0.0001)
+    parser.add_argument("--valid-step", type=int, default=1)
     args = parser.parse_args()
     print("           ⊱ ──────ஓ๑♡๑ஓ ────── ⊰")
     print("🎵 hhey, arguments are here if you need to check 🎵")
@@ -21,10 +23,10 @@ args = get_args()
 
 # Training
 EPOCHS = args.epoch
-LEARNING_RATE = 0.0001
+LEARNING_RATE = args.lr
 BATCH_SIZE = args.batch
 CHECKPOINT_STEP = 2
-VALIDATE_STEP = 1
+VALIDATE_STEP = args.valid_step
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLASSES = args.num_classes
 ROOT = args.root
@@ -33,11 +35,12 @@ print(f"Using {DEVICE}")
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
 model = model.to(DEVICE)
 
-if os.path.exists(args.pretrained):
-    checkpoint = torch.load(args.pretrained)
-    model.load_state_dict(checkpoint['state_dict'])
-    start_epoch = checkpoint['epoch']
-    print('Resume training from {}, start at epoch: {}'.format(args.pretrained, start_epoch))
+# if os.path.exists(args.pretrained):
+#     checkpoint = torch.load(args.pretrained)
+#     model.load_state_dict(checkpoint['state_dict'])
+#     start_epoch = checkpoint['epoch']
+#     miou = checkpoint['miou']
+#     print('Resume training from /{}/ have mIoU = {}, start at epoch: {} \n'.format(args.pretrained, miou, start_epoch))
 
 # Dataloader for train
 # dataset_train = CamVidDataset(mode='train', num_classes=NUM_CLASSES, device=DEVICE)
@@ -51,7 +54,7 @@ dataloader_train = DataLoader(
 
 # Dataloader for validate
 # dataset_val = CamVidDataset(mode='val')
-dataset_val = FigaroDataset('Figaro_1k/', num_classes=NUM_CLASSES, mode='val', device=DEVICE)
+dataset_val = FigaroDataset(ROOT, num_classes=NUM_CLASSES, mode='val', device=DEVICE)
 dataloader_val = DataLoader(
     dataset_val,
     batch_size=1,
@@ -60,9 +63,7 @@ dataloader_val = DataLoader(
 
 # Optimizer
 optimizer = torch.optim.Adam(model.parameters(), LEARNING_RATE)
-
 loss_func = torch.nn.CrossEntropyLoss()
-
 
 # Loop for training
 torch.cuda.empty_cache()
@@ -102,22 +103,21 @@ for epoch in range(EPOCHS):
     if epoch % CHECKPOINT_STEP == 0:
         states = {
             'epoch': epoch + 1,
-            'state_dict': model.state_dict()
+            'state_dict': model.state_dict(),
+            'miou': max_miou
         }
-        # torch.save(model.state_dict(), 'checkpoints/lastest_model.pth')
         torch.save(states, 'checkpoints/lastest_model.pth')
 
-    # Validate save best model
     # Save checkpoint
     if epoch % VALIDATE_STEP == 0:
-        model.load_state_dict(torch.load('checkpoints/lastest_model.pth'))
+        model.load_state_dict(torch.load('checkpoints/lastest_model.pth')['state_dict'])
         _, mean_iou = val(model, dataloader_val, NUM_CLASSES)
         if mean_iou > max_miou:
             max_miou = mean_iou
             print('Save best model with mIoU = {} \n'.format(mean_iou))
             states = {
                 'epoch': epoch + 1,
-                'state_dict': model.state_dict()
+                'state_dict': model.state_dict(),
+                'miou': max_miou
             }
-            # torch.save(model.state_dict(), 'checkpoints/best_model.pth')
             torch.save(states, 'checkpoints/best_model.pth')

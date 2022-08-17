@@ -24,26 +24,26 @@ def compute_accuracy(pred, label):
             count = count + 1.0
     return float(count) / float(total)
 
-def val(model, dataloader, NUM_CLASSES=2, device='cpu'):
+
+def val(model, dataloader, NUM_CLASSES=2, device='cuda'):
     accuracy_arr = []
 
     hist = np.zeros((NUM_CLASSES, NUM_CLASSES))
 
     with torch.no_grad():
-        model.to(device)
         model.eval()
         print('Starting validate')
 
         for i, (val_data, val_label) in enumerate(dataloader):
-            val_data = val_data.to(device) # <-- cuda: error in colab?
+            val_data = val_data.to(device)
             # The output of model is (1, num_classes, W, H) => (num_classes, W, H)
             val_output = model(val_data).squeeze()
             # Convert the (num_classes, W, H) => (W, H) with one hot decoder
             val_output = reverse_one_hot(val_output)
-            val_output = np.array(val_output.to(device))
+            val_output = np.array(val_output.cpu())
             # Process label. Convert to (W, H) image
             val_label = val_label.squeeze()
-            val_label = np.array(val_label.to(device))
+            val_label = np.array(val_label.cpu())
             # Compute accuracy and iou
             accuracy = compute_accuracy(val_output, val_label)
             hist += fast_hist(val_label.flatten(), val_output.flatten(), NUM_CLASSES)
