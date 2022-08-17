@@ -35,12 +35,12 @@ def val(model, dataloader, NUM_CLASSES=2, device='cpu'):
         print('Starting validate')
 
         for i, (val_data, val_label) in enumerate(dataloader):
-            val_data = val_data.to('cpu') # <-- cuda: error in colab?
+            val_data = val_data.to(device) # <-- cuda: error in colab?
             # The output of model is (1, num_classes, W, H) => (num_classes, W, H)
             val_output = model(val_data).squeeze()
             # Convert the (num_classes, W, H) => (W, H) with one hot decoder
             val_output = reverse_one_hot(val_output)
-            val_output = np.array(val_output.to('cpu'))
+            val_output = np.array(val_output.to(device))
             # Process label. Convert to (W, H) image
             val_label = val_label.squeeze()
             val_label = np.array(val_label.to(device))

@@ -19,25 +19,25 @@ def get_args():
 
 args = get_args()
 
-if os.path.exists(args.pretrained):
-    checkpoint = torch.load(args.pretrained)
-    model.load_state_dict(checkpoint['state_dict'])
-    start_epoch = checkpoint['epoch']
-    print('Resume training from {}, start at epoch: {}'.format(args.pretrained, start_epoch))
-
 # Training
 EPOCHS = args.epoch
 LEARNING_RATE = 0.0001
 BATCH_SIZE = args.batch
 CHECKPOINT_STEP = 2
 VALIDATE_STEP = 1
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLASSES = args.num_classes
 ROOT = args.root
 
 print(f"Using {DEVICE}")
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
 model = model.to(DEVICE)
+
+if os.path.exists(args.pretrained):
+    checkpoint = torch.load(args.pretrained)
+    model.load_state_dict(checkpoint['state_dict'])
+    start_epoch = checkpoint['epoch']
+    print('Resume training from {}, start at epoch: {}'.format(args.pretrained, start_epoch))
 
 # Dataloader for train
 # dataset_train = CamVidDataset(mode='train', num_classes=NUM_CLASSES, device=DEVICE)
@@ -111,7 +111,7 @@ for epoch in range(EPOCHS):
     # Save checkpoint
     if epoch % VALIDATE_STEP == 0:
         model.load_state_dict(torch.load('checkpoints/lastest_model.pth'))
-        _, mean_iou = val(model, dataloader_val, NUM_CLASSES, DEVICE)
+        _, mean_iou = val(model, dataloader_val, NUM_CLASSES)
         if mean_iou > max_miou:
             max_miou = mean_iou
             print('Save best model with mIoU = {} \n'.format(mean_iou))
