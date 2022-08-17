@@ -35,12 +35,12 @@ print(f"Using {DEVICE}")
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
 model = model.to(DEVICE)
 
-# if os.path.exists(args.pretrained):
-#     checkpoint = torch.load(args.pretrained)
-#     model.load_state_dict(checkpoint['state_dict'])
-#     start_epoch = checkpoint['epoch']
-#     miou = checkpoint['miou']
-#     print('Resume training from /{}/ have mIoU = {}, start at epoch: {} \n'.format(args.pretrained, miou, start_epoch))
+if os.path.exists(args.pretrained):
+    checkpoint = torch.load(args.pretrained)
+    model.load_state_dict(checkpoint['state_dict'])
+    start_epoch = checkpoint['epoch']
+    miou = checkpoint['miou']
+    print('Resume training from /{}/ have mIoU = {}, start at epoch: {} \n'.format(args.pretrained, miou, start_epoch))
 
 # Dataloader for train
 # dataset_train = CamVidDataset(mode='train', num_classes=NUM_CLASSES, device=DEVICE)
@@ -113,7 +113,7 @@ for epoch in range(EPOCHS):
         model.load_state_dict(torch.load('checkpoints/lastest_model.pth')['state_dict'])
         _, mean_iou = val(model, dataloader_val, NUM_CLASSES)
         if mean_iou > max_miou:
-            max_miou = mean_iou
+            max_miou = max_miou
             print('Save best model with mIoU = {} \n'.format(mean_iou))
             states = {
                 'epoch': epoch + 1,
