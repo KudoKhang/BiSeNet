@@ -1,5 +1,3 @@
-import os.path
-
 from networks import *
 
 def get_args():
@@ -8,7 +6,7 @@ def get_args():
     parser.add_argument("--num_classes", type=int, default=2, help="")
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--epoch", type=int, default=200)
-    parser.add_argument("--pretrained", type=str, default='checkpoints/lastest_model.pth')
+    parser.add_argument("--pretrained", type=str, default='checkpoints/')
     parser.add_argument("--lr", type=float, default=0.0001)
     parser.add_argument("--valid-step", type=int, default=1)
     args = parser.parse_args()
@@ -25,7 +23,7 @@ args = get_args()
 EPOCHS = args.epoch
 LEARNING_RATE = args.lr
 BATCH_SIZE = args.batch
-CHECKPOINT_STEP = 2
+CHECKPOINT_STEP = 1
 VALIDATE_STEP = args.valid_step
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLASSES = args.num_classes
@@ -35,8 +33,8 @@ print(f"Using {DEVICE}")
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
 model = model.to(DEVICE)
 
-if os.path.exists(args.pretrained):
-    checkpoint = torch.load(args.pretrained)
+if os.path.exists(os.path.join(args.pretrained, 'lastest_model.pth')):
+    checkpoint = torch.load(os.path.join(args.pretrained, 'lastest_model.pth'))
     model.load_state_dict(checkpoint['state_dict'])
     start_epoch = checkpoint['epoch']
     miou = checkpoint['miou']
@@ -97,8 +95,8 @@ for epoch in range(EPOCHS):
     print('loss for train : %f' % (loss_train_mean))
 
     # Save checkpoint
-    if not os.path.exists('checkpoints'):
-        os.makedirs('checkpoints/', exist_ok=True)
+    if not os.path.exists(args.pretrained):
+        os.makedirs(args.pretrained, exist_ok=True)
 
     if epoch % CHECKPOINT_STEP == 0:
         states = {
@@ -106,18 +104,18 @@ for epoch in range(EPOCHS):
             'state_dict': model.state_dict(),
             'miou': max_miou
         }
-        torch.save(states, 'checkpoints/lastest_model.pth')
+        torch.save(states, f'{args.pretrained}/lastest_model.pth')
 
     # Save checkpoint
     if epoch % VALIDATE_STEP == 0:
-        model.load_state_dict(torch.load('checkpoints/lastest_model.pth')['state_dict'])
+        model.load_state_dict(torch.load(f'{args.pretrained}/lastest_model.pth')['state_dict'])
         _, mean_iou = val(model, dataloader_val, NUM_CLASSES)
         if mean_iou > max_miou:
-            max_miou = max_miou
+            max_miou = mean_iou
             print('Save best model with mIoU = {} \n'.format(mean_iou))
             states = {
                 'epoch': epoch + 1,
                 'state_dict': model.state_dict(),
                 'miou': max_miou
             }
-            torch.save(states, 'checkpoints/best_model.pth')
+            torch.save(states, f'{args.pretrained}/best_model.pth')

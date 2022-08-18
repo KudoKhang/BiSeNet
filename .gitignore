@@ -5,3 +5,6 @@
 checkpoints/
 src/
 dataset/
+*.pyc
+*__pycache__
+/results
