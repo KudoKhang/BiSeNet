@@ -4,7 +4,7 @@ from networks import *
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=str, default="Figaro_1k/", help="Path to input image")
+    parser.add_argument("--root", type=str, default="dataset/Figaro_1k_png/", help="Path to input image")
     parser.add_argument("--num_classes", type=int, default=2, help="")
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--epoch", type=int, default=200)

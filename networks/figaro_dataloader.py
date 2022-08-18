@@ -1,5 +1,3 @@
-import os
-
 from .libs import *
 
 class FigaroDataset(Dataset):
@@ -50,7 +48,7 @@ class FigaroDataset(Dataset):
         """
         data_path = data_path.replace(data_dir, label_dir)
         fname, _ = data_path.split('.')
-        return "{}.{}".format(fname, 'pbm')
+        return "{}.{}".format(fname, 'png')
 
     def image_loader(self, data_path, label_path):
         data = Image.open(data_path)

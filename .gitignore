@@ -2,7 +2,6 @@
 *png
 .idea/
 *.DS_Store
-Figaro_1k/
 checkpoints/
-CamVid/
 src/
+dataset/
