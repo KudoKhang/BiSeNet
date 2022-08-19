@@ -32,7 +32,7 @@ def val(model, dataloader, NUM_CLASSES=2, device='cuda'):
 
     with torch.no_grad():
         model.eval()
-        print('Starting validate')
+        print('Starting validate...')
 
         for i, (val_data, val_label) in enumerate(dataloader):
             val_data = val_data.to(device)

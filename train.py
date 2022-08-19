@@ -58,7 +58,7 @@ torch.cuda.empty_cache()
 for epoch in range(start_epoch, EPOCHS):
     model.train()
     tq = tqdm(total=len(dataloader_train) * BATCH_SIZE)
-    tq.set_description('Epoch {}/{}'.format(epoch, EPOCHS))
+    tq.set_description('\n Epoch {}/{}'.format(epoch, EPOCHS))
 
     loss_record = []
 
@@ -96,17 +96,20 @@ for epoch in range(start_epoch, EPOCHS):
 
     # Save checkpoint
     if epoch % VALIDATE_STEP == 0:
-        model.load_state_dict(torch.load(f'{args.pretrained}/lastest_model.pth')['state_dict'])
+        checkpoint = torch.load(os.path.join(args.pretrained, 'lastest_model.pth'))
+        model.load_state_dict(checkpoint['state_dict'])
         _, mean_iou = val(model, dataloader_val, NUM_CLASSES)
         if mean_iou > max_miou:
             max_miou = mean_iou
-            print('Save best model with mIoU = {} \n'.format(mean_iou))
+            print('---Save best model with mIoU = {}--- \n'.format(mean_iou))
             states = {
                 'epoch': epoch + 1,
                 'state_dict': model.state_dict(),
                 'miou': max_miou
             }
             torch.save(states, f'{args.pretrained}/best_model.pth')
+        else:
+            print('---Save Failed---')
 
     wandb.init(project='Hair_segmentation', entity='khanghn')
-    wandb.log({"mIoU: ": max_miou, "Loss: ": loss_train_mean.data.cpu()})
+    wandb.log({"mIoU: ": max_miou, "Loss: ": loss_train_mean})
