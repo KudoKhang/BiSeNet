@@ -17,18 +17,4 @@ def get_args():
     print()
     return args
 
-args = get_args()
 
-# Training
-EPOCHS = args.epoch
-LEARNING_RATE = args.lr
-BATCH_SIZE = args.batch
-CHECKPOINT_STEP = 1
-VALIDATE_STEP = args.valid_step
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-NUM_CLASSES = args.num_classes
-ROOT = args.root
-start_epoch = 0
-max_miou = 0
-
-print(f"Using {DEVICE}")

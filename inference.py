@@ -1,6 +1,3 @@
-import os
-import time
-
 from networks import *
 
 class BSNPredict:
@@ -10,6 +7,7 @@ class BSNPredict:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = BiSeNet(num_classes=self.NUM_CLASSES)
         self.model.load_state_dict(torch.load(self.pretrained, map_location=torch.device(self.device))['state_dict'])
+        print(f'Predict with ---{pretrained}---')
         self.model = self.model.to(self.device)
         self.model.eval()
 
@@ -76,8 +74,8 @@ def webcam():
         frame = BSN.predict(frame)
         # FPS
         fps = round(1 / (time.time() - start), 2)
-        cv2.putText(frame, "FPS : " + str(fps), (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
-        cv2.imshow('Prediction', frame)
+        cv2.putText(frame, "FPS : " + str(fps), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
+        cv2.imshow('Prediction', frame + 30)
         k = cv2.waitKey(20) & 0xFF
         if k == ord('s'):
             os.makedirs('results/', exist_ok=True)
@@ -126,8 +124,8 @@ def process_folder(path, output):
 
 if __name__ == '__main__':
     # BSN = BSNPredict(pretrained='checkpoints/best_model_aug_920.pth')
-    BSN = BSNPredict(pretrained='checkpoints/lapa_model.pth')
-    # image('src/7.jpg')
+    BSN = BSNPredict(pretrained='checkpoints/lapa_model_last.pth')
+    image('dataset/Figaro_1k/test/images/79.jpg')
     # webcam()
-    video()
+    # video('src/hair2.mp4')
     # time_inference('dataset/Figaro_1k/test/images/')

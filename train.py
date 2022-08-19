@@ -1,9 +1,26 @@
+import wandb
+
 from networks import *
 
 """
     - Check hyperparameter in networks/config.py
 """
 
+args = get_args()
+
+# Training
+EPOCHS = args.epoch
+LEARNING_RATE = args.lr
+BATCH_SIZE = args.batch
+CHECKPOINT_STEP = 1
+VALIDATE_STEP = args.valid_step
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+NUM_CLASSES = args.num_classes
+ROOT = args.root
+start_epoch = 0
+max_miou = 0
+
+print(f"Using {DEVICE}")
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
 model = model.to(DEVICE)
 
@@ -90,3 +107,6 @@ for epoch in range(start_epoch, EPOCHS):
                 'miou': max_miou
             }
             torch.save(states, f'{args.pretrained}/best_model.pth')
+
+    wandb.init(project='Hair_segmentation', entity='khanghn')
+    wandb.log({"mIoU: ": max_miou, "Loss: ": loss_train_mean.data.cpu()})

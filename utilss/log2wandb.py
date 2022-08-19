@@ -1,8 +1,8 @@
 from networks.libs import *
 
-def log2wandb(lr, loss, project, epoch, data_dir, log_dir):
+def log2wandb(miou, loss, project, epoch, data_dir, log_dir):
     wandb.init(project=project, entity='khanghn')
-    wandb.log({"Lr: ": lr, "Loss: ": loss.data.cpu()})
+    wandb.log({"mIoU: ": miou, "Loss: ": loss.data.cpu()})
 
     def log(weight=os.path.join(log_dir, "model_parsing_best.pth.tar"), mode='Best', data_dir=None):
         mIoU = eval(weight, data_dir)

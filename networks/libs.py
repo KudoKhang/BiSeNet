@@ -17,5 +17,7 @@ import torch.cuda
 from matplotlib import pyplot as plt
 import cv2
 import argparse
+import wandb
+os.environ["WANDB_API_KEY"] = 'e7ed558aefc5cddf29d04c3037a712507b253521'
 import warnings
 warnings.filterwarnings('ignore')
