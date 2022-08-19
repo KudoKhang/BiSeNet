@@ -8,3 +8,4 @@ dataset/
 *.pyc
 *__pycache__
 /results
+test.py

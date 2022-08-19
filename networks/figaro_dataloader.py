@@ -18,8 +18,6 @@ class FigaroDataset(Dataset):
         ])
 
         self.DATA_PATH = os.path.join(os.getcwd(), self.path_dataset)
-        # self.DATA_PATH = self.path_dataset
-
         self.train_path, self.val_path, self.test_path = [os.path.join(self.DATA_PATH, x) for x in
                                                           ['train', 'val', 'test']]
 
@@ -38,13 +36,13 @@ class FigaroDataset(Dataset):
 
     def get_files(self, data_folder):
         """
-            Return all files in folder with extension
+            Return all image path
         """
         return glob("{}/*.{}".format(os.path.join(data_folder, 'images'), 'jpg'))
 
     def get_label_file(self, data_path, data_dir, label_dir):
         """
-            Return label path for data_path file
+            Return all mask path
         """
         data_path = data_path.replace(data_dir, label_dir)
         fname, _ = data_path.split('.')
@@ -75,10 +73,9 @@ class FigaroDataset(Dataset):
     def __getitem__(self, index):
         """
             Args:
-            - index (``int``): index of the item in the dataset
+            - index (``int``): index of the item in the dataset, range(__len()__)
             Returns:
-            A tuple of ``PIL.Image`` (image, label) where label is the ground-truth
-            of the image.
+            A tuple of (image, label)
         """
 
         data_path, label_path = self.data_files[index], self.label_files[index]
@@ -94,11 +91,14 @@ class FigaroDataset(Dataset):
         return img, label
 
     def __len__(self):
+        """
+            return len of items in dataset
+        """
         num = [name for name in os.listdir(os.path.join(self.DATA_PATH, self.mode, 'images')) if name.endswith('jpg')]
         return len(num)
 
-
 if __name__ == '__main__':
+    # TEST
     from bisenet import BiSeNet
     model = BiSeNet(num_classes=2, training=True)
     dataset_val = FigaroDataset('Figaro_1k/', num_classes=2, mode='val', device='cpu')

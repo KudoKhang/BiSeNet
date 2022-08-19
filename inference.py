@@ -1,3 +1,6 @@
+import os
+import time
+
 from networks import *
 
 class BSNPredict:
@@ -103,10 +106,28 @@ def video(path_video='src/video1.mp4'):
     out.release()
     print('Done!')
 
+def time_inference(root):
+    path_name = [os.path.join(root, name) for name in os.listdir(root) if name.endswith('jpg')]
+    start = time.time()
+    for path in tqdm(path_name):
+        BSN.predict(path)
+    end = (time.time() - start) / len(path_name)
+    print(f'Avg time inference {len(path_name)} images is:', round(end * 1e3), 'ms')
+
+def image(path='dataset/Figaro_1k/test/images/971.jpg'):
+    start = time.time()
+    img = BSN.predict(path)
+    print('Time inference: ', round((time.time() - start) * 1e3, 2), 'ms')
+    cv2.imshow('Result BiSeNet', img)
+    cv2.waitKey(0)
+
+def process_folder(path, output):
+    pass
+
 if __name__ == '__main__':
-    BSN = BSNPredict()
+    # BSN = BSNPredict(pretrained='checkpoints/best_model_aug_920.pth')
+    BSN = BSNPredict(pretrained='checkpoints/lapa_model.pth')
+    # image('src/7.jpg')
     # webcam()
     video()
-    # img = BSN.predict('dataset/Figaro_1k/test/images/187.jpg')
-    # cv2.imshow('result BiSeNet', img)
-    # cv2.waitKey(0)
+    # time_inference('dataset/Figaro_1k/test/images/')
