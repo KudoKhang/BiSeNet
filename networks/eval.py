@@ -53,6 +53,7 @@ def val(model, dataloader, NUM_CLASSES=2, device='cuda'):
 
         for i, (val_data, val_label) in tqdm(enumerate(dataloader)):
             val_data = val_data.to(device)
+            val_label = val_label.to(device)
             val_output = model(val_data).squeeze()
             val_output = reverse_one_hot(val_output)
             val_output_f1 = torch.clone(val_output)

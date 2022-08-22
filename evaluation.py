@@ -1,3 +1,5 @@
+import torch
+
 from networks import *
 
 args = get_args()
@@ -18,9 +20,9 @@ print(f"Using {DEVICE}")
 model = BiSeNet(num_classes=NUM_CLASSES, training=False)
 model = model.to(DEVICE)
 
-checkpoint = torch.load(os.path.join(args.pretrained, 'best_model.pth'))
+checkpoint = torch.load(os.path.join(args.pretrained, 'best_model_900.pth'), map_location=torch.device(DEVICE))
 model.load_state_dict(checkpoint['state_dict'])
-dataset_val = FigaroDataset('dataset/Figaro_1k/', num_classes=2, mode='val', device=DEVICE)
+dataset_val = FigaroDataset(ROOT, num_classes=NUM_CLASSES, mode='val', device=DEVICE)
 
 dataloader_val = DataLoader(
         dataset_val,
