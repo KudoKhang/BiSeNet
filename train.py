@@ -1,5 +1,3 @@
-import wandb
-
 from networks import *
 
 """
@@ -55,6 +53,8 @@ loss_func = torch.nn.CrossEntropyLoss()
 # Loop for training
 torch.cuda.empty_cache()
 
+wandb.init(project='Hair_segmentation', entity='khanghn')
+
 for epoch in range(start_epoch, EPOCHS):
     model.train()
     tq = tqdm(total=len(dataloader_train) * BATCH_SIZE)
@@ -98,7 +98,7 @@ for epoch in range(start_epoch, EPOCHS):
     if epoch % VALIDATE_STEP == 0:
         checkpoint = torch.load(os.path.join(args.pretrained, 'lastest_model.pth'))
         model.load_state_dict(checkpoint['state_dict'])
-        _, mean_iou = val(model, dataloader_val, NUM_CLASSES)
+        accuracy, mean_iou, f1_score = val(model, dataloader_val, NUM_CLASSES, DEVICE)
         if mean_iou > max_miou:
             max_miou = mean_iou
             print('---Save best model with mIoU = {}--- \n'.format(mean_iou))
@@ -111,5 +111,7 @@ for epoch in range(start_epoch, EPOCHS):
         else:
             print('---Save Failed---')
 
-    wandb.init(project='Hair_segmentation', entity='khanghn')
-    wandb.log({"mIoU: ": max_miou, "Loss: ": loss_train_mean})
+    wandb.log({"mIoU: ": max_miou,
+               "Accuracy ": accuracy,
+               "F1 Score ": f1_score,
+               "Loss: ": loss_train_mean})

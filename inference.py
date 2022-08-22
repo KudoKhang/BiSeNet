@@ -7,7 +7,7 @@ class BSNPredict:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = BiSeNet(num_classes=self.NUM_CLASSES)
         self.model.load_state_dict(torch.load(self.pretrained, map_location=torch.device(self.device))['state_dict'])
-        print(f'Predict with ---{pretrained}---')
+        print(f'Inference with ---{pretrained}---')
         self.model = self.model.to(self.device)
         self.model.eval()
 
@@ -70,6 +70,7 @@ def webcam():
     cap = cv2.VideoCapture(0)
     while True:
         _, frame = cap.read()
+        frame = cv2.flip(frame, 1)
         start = time.time()
         frame = BSN.predict(frame)
         # FPS
@@ -83,7 +84,7 @@ def webcam():
         if k == ord('q'):
             break
 
-def video(path_video='src/video1.mp4'):
+def video(path_video='src/video1.mp4', name='result_'):
     print('Processing video... \n Please wait...')
     cap = cv2.VideoCapture(path_video)
     frame_width = int(cap.get(3))
@@ -91,7 +92,7 @@ def video(path_video='src/video1.mp4'):
     size = (frame_width, frame_height)
     fps = 30
     os.makedirs('results/', exist_ok=True)
-    out = cv2.VideoWriter('results/results_' + path_video.split('/')[-1], cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), fps, size)
+    out = cv2.VideoWriter(f'results/{name}' + path_video.split('/')[-1], cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), fps, size)
 
     while True:
         _, frame = cap.read()
@@ -123,9 +124,8 @@ def process_folder(path, output):
     pass
 
 if __name__ == '__main__':
-    # BSN = BSNPredict(pretrained='checkpoints/best_model_aug_920.pth')
-    BSN = BSNPredict(pretrained='checkpoints/lapa_model_last.pth')
-    image('dataset/Figaro_1k/test/images/79.jpg')
+    BSN = BSNPredict(pretrained='checkpoints/lastest_model_CeFiLa.pth')
+    # image('dataset/Figaro_1k/test/images/79.jpg')
     # webcam()
-    # video('src/hair2.mp4')
+    video('src/hair1.mp4', 'CeFiLa_')
     # time_inference('dataset/Figaro_1k/test/images/')
