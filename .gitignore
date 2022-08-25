@@ -10,3 +10,4 @@ dataset/
 /results
 *.pt
 test.py
+/wandb
