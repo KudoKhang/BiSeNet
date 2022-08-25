@@ -1,12 +1,8 @@
 from networks import *
 
-"""
-    - Check hyperparameter in networks/config.py
-"""
-
 args = get_args()
 
-# Training
+# Config hyperparameter
 EPOCHS = args.epoch
 LEARNING_RATE = args.lr
 BATCH_SIZE = args.batch
@@ -18,10 +14,13 @@ ROOT = args.root
 start_epoch = 0
 max_miou = 0
 
-print(f"Using {DEVICE}")
+print(f"Device using: {DEVICE}")
+
+# Init model
 model = BiSeNet(num_classes=NUM_CLASSES, training=True)
 model = model.to(DEVICE)
 
+# Load pretrained if exist
 if os.path.exists(os.path.join(args.pretrained, 'lastest_model.pth')):
     checkpoint = torch.load(os.path.join(args.pretrained, 'lastest_model.pth'))
     model.load_state_dict(checkpoint['state_dict'])
@@ -44,7 +43,7 @@ dataloader_train = DataLoader(
 dataset_val = FigaroDataset(ROOT, num_classes=NUM_CLASSES, mode='val', device=DEVICE)
 dataloader_val = DataLoader(
         dataset_val,
-        batch_size=1,
+        batch_size=1, # TODO: Code eval support each batch
         pin_memory=True,
         num_workers=args.num_workers,
         shuffle=True
@@ -57,6 +56,7 @@ loss_func = torch.nn.CrossEntropyLoss()
 # Loop for training
 torch.cuda.empty_cache()
 
+# Init section in Wandb
 wandb.init(project='Hair_segmentation', entity='khanghn')
 
 for epoch in range(start_epoch, EPOCHS):
@@ -98,7 +98,7 @@ for epoch in range(start_epoch, EPOCHS):
         }
         torch.save(states, f'{args.pretrained}/lastest_model.pth')
 
-    # Save checkpoint
+    # Save best checkpoint via mIoU
     if epoch % VALIDATE_STEP == 0:
         checkpoint = torch.load(os.path.join(args.pretrained, 'lastest_model.pth'))
         model.load_state_dict(checkpoint['state_dict'])
@@ -115,6 +115,7 @@ for epoch in range(start_epoch, EPOCHS):
         else:
             print('---Save Failed---')
 
+    # Log metrics to wandb
     wandb.log({"mIoU: ": max_miou,
                "Accuracy ": accuracy,
                "F1 Score ": f1_score,

@@ -57,26 +57,12 @@ def image(path='dataset/Figaro_1k/test/images/971.jpg'):
 
 def process_folder(path, output):
     pass
-
-def detect_person(img):
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
-    results = model(img)
-    t = results.pandas().xyxy[0]
-    bbox = list(np.int32(np.array(t)[:, :4][np.where(np.array(t)[:, 6] == 'person')]))
-    draw(img, bbox)
-    return bbox
-
-def draw(img, bbox):
-    for bb in bbox:
-        x1, y1, x2, y2 = bb
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 255), 1)
-
 #--------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
     BSN = BSNPredict(pretrained='checkpoints/lastest_model_CeFiLa.pth')
     # img = cv2.imread('dataset/Figaro_1k/test/images/450.jpg')
-    # image('dataset/Figaro_1k/test/images/79.jpg')
+    # image('src/test.jpg')
     webcam()
     # video(BSN, 'src/hair1.mp4', 'CeFiLa_')
     # time_inference('dataset/Figaro_1k/test/images/')

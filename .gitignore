@@ -1,5 +1,5 @@
-*jpg
-*png
+*.jpg
+*.png
 .idea/
 *.DS_Store
 checkpoints/
@@ -7,7 +7,7 @@ src/
 dataset/
 *.pyc
 *__pycache__
-/results
+results/
 *.pt
 test.py
-/wandb
+wandb/
