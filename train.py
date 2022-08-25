@@ -32,18 +32,22 @@ if os.path.exists(os.path.join(args.pretrained, 'lastest_model.pth')):
 # Dataloader for train
 dataset_train = FigaroDataset(ROOT, num_classes=NUM_CLASSES, mode='train', device=DEVICE)
 dataloader_train = DataLoader(
-    dataset_train,
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-    drop_last=True
-)
+        dataset_train,
+        batch_size=BATCH_SIZE,
+        pin_memory=True,
+        num_workers=args.num_workers,
+        shuffle=True,
+        drop_last=True
+    )
 
 # Dataloader for validate
 dataset_val = FigaroDataset(ROOT, num_classes=NUM_CLASSES, mode='val', device=DEVICE)
 dataloader_val = DataLoader(
-    dataset_val,
-    batch_size=1,
-    shuffle=True
+        dataset_val,
+        batch_size=1,
+        pin_memory=True,
+        num_workers=args.num_workers,
+        shuffle=True
 )
 
 # Optimizer

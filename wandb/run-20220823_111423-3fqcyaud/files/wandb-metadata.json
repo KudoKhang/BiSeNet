@@ -1,0 +1,21 @@
+{
+    "os": "macOS-12.3-arm64-arm-64bit",
+    "python": "3.9.9",
+    "heartbeatAt": "2022-08-23T04:14:27.246578",
+    "startedAt": "2022-08-23T04:14:23.606961",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/Users/NghiaKhang/Coding/Lab/BiseNet/train.py",
+    "git": {
+        "remote": "https://github.com/KudoKhang/BiSeNet.git",
+        "commit": "23806d43aa85401b3a64ba0555f66273652b0d89"
+    },
+    "email": "thanhchem.k39a1@gmail.com",
+    "root": "/Users/NghiaKhang/Coding/Lab/BiSeNet",
+    "host": "Khangs-MacBook.local",
+    "username": "khangnghia",
+    "executable": "/Users/NghiaKhang/miniforge3/envs/venv/bin/python"
+}

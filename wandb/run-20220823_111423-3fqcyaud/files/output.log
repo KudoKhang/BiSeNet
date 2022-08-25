@@ -1,0 +1,31 @@
+  0% 0/1000 [00:00<?, ?it/s]
+ Epoch 0/200:   0% 0/1000 [00:00<?, ?it/s]
+ Epoch 0/200:   1% 8/1000 [00:01<03:46,  4.38it/s]
+ Epoch 0/200:   1% 8/1000 [00:01<03:46,  4.38it/s, loss=2.151146]
+ Epoch 0/200:   2% 16/1000 [00:06<07:05,  2.31it/s, loss=2.151146]
+ Epoch 0/200:   2% 16/1000 [00:06<07:05,  2.31it/s, loss=2.007025]
+ Epoch 0/200:   2% 24/1000 [00:10<07:59,  2.03it/s, loss=2.007025]
+ Epoch 0/200:   2% 24/1000 [00:10<07:59,  2.03it/s, loss=1.959615]
+ Epoch 0/200:   3% 32/1000 [00:15<08:36,  1.88it/s, loss=1.959615]
+ Epoch 0/200:   3% 32/1000 [00:15<08:36,  1.88it/s, loss=1.755496]Traceback (most recent call last):
+  File "/Users/NghiaKhang/Coding/Lab/BiseNet/train.py", line 68, in <module>
+    output, output_sup1, output_sup2 = model(data)
+  File "/Users/NghiaKhang/miniforge3/envs/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/NghiaKhang/Coding/Lab/BiSeNet/networks/bisenet.py", line 158, in forward
+    sp_out = self.spatial_path(x_input)
+  File "/Users/NghiaKhang/miniforge3/envs/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/NghiaKhang/Coding/Lab/BiSeNet/networks/bisenet.py", line 37, in forward
+    x = self.conv3(x)
+  File "/Users/NghiaKhang/miniforge3/envs/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/NghiaKhang/Coding/Lab/BiSeNet/networks/bisenet.py", line 22, in forward
+    x = self.conv1(x)
+  File "/Users/NghiaKhang/miniforge3/envs/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/NghiaKhang/miniforge3/envs/venv/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 446, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/Users/NghiaKhang/miniforge3/envs/venv/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 442, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+KeyboardInterrupt

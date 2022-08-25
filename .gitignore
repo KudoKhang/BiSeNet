@@ -8,4 +8,5 @@ dataset/
 *.pyc
 *__pycache__
 /results
+*.pt
 test.py

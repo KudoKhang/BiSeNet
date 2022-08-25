@@ -8,6 +8,7 @@ def get_args():
     parser.add_argument("--epoch", type=int, default=200)
     parser.add_argument("--pretrained", type=str, default='checkpoints/')
     parser.add_argument("--lr", type=float, default=0.0001)
+    parser.add_argument("--num-workers", type=int, default=16)
     parser.add_argument("--valid-step", type=int, default=1)
     args = parser.parse_args()
     print("           ⊱ ──────ஓ๑♡๑ஓ ────── ⊰")
