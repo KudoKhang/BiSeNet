@@ -11,6 +11,11 @@ class BSNPredict:
         self.model = self.model.to(self.device)
         self.model.eval()
 
+        """
+            IDEA: thay detect_person = detect_head
+            https://github.com/yxlijun/S3FD.pytorch
+            https://github.com/deepakcrk/yolov5-crowdhuman 
+        """
         # Model detect person
         self.model_detect_person = torch.hub.load('ultralytics/yolov5', 'custom', path='src/weights/yolov5s.pt', force_reload=True)
         # self.model_detect_person = torch.hub.load('ultralytics/yolov5', 'yolov5s')
@@ -57,16 +62,21 @@ class BSNPredict:
             img = img_path
         return img
 
-    def draw_bbox(self,img, bbox):
+    def draw_bbox(self, img, t):
+        bbox = list(t[:, :5][np.where(t[:, 6] == 'person')][np.where(t[:, 4] > 0.7)])
         for bb in bbox:
-            x1, y1, x2, y2 = bb
+            x1, y1, x2, y2 = np.uint32(bb[:4])
+            confident = bb[4]
+            img = cv2.putText(img, 'Confident: ' + str(round(confident * 100, 2)) + '%', (x1 + 2, y1 + 30), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 128, 255), 2, cv2.LINE_AA)
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
     def detect_person(self, img):
+        # TODO: FIX CASE NO PERSON
         results = self.model_detect_person(img)
-        t = results.pandas().xyxy[0]
-        bbox = list(np.int32(np.array(t)[:, :4][np.where(np.array(t)[:, 6] == 'person')]))
-        # self.draw_bbox(img, bbox)
+        t = np.array(results.pandas().xyxy[0])
+        # bbox = list(np.int32(t[:, :4][np.where(t[:, 6] == 'person')][np.where(t[:,4] > 0.7)])) # Get person have condident score > 0.7
+        bbox = list(np.int32(t[:, :4][np.where(t[:, 6] == 'person')]))
+        # self.draw_bbox(img, t)
         return bbox
 
     def predict(self, image_path, visualize=True):

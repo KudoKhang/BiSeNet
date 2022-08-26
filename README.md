@@ -21,8 +21,10 @@ dataset---train---images---0.jpg
 
 train/test/val = 90/5/5        
 ```
-# TODO-LIST
-- [ ] Head crop
-- [ ] Helen
-- [ ] Celeb-HQ
-- [ ] LaPa
+# Augument datasets
+- [x] Helen
+- [x] Celeb-HQ
+- [x] LaPa
+- [x] IBug
+----
+Merge 4 dataset augmented → CeHePaIb 

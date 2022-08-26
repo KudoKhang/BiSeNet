@@ -1,5 +1,6 @@
 wandb
 torch
-torchsumary
+torchsummary
 torchvision
-glob
+glob2
+alive_progress
