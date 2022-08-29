@@ -13,3 +13,4 @@ test.py
 wandb/
 tests/
 test_alivebar.py
+yolov5s.pt

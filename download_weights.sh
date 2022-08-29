@@ -1,1 +1,2 @@
-!mkdir checkpoints
+mkdir checkpoints
+gdown 1RRrNDmhS_uJqbOuT5rdohMSl5x_OzVo0 -O checkpoints/best_model_CeFiLaIb.pth

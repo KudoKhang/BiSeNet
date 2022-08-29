@@ -3,4 +3,4 @@ torch
 torchsummary
 torchvision
 glob2
-alive_progress
+gdown
