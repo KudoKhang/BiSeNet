@@ -12,3 +12,4 @@ results/
 test.py
 wandb/
 tests/
+test_alivebar.py

@@ -1,5 +1,7 @@
 from .libs import *
 
+# Model builded follow Pham Van Toan's tutorial | Link: https://viblo.asia/p/paper-explainsegmentation-tom-tat-noi-dung-va-implement-paper-bisenet-voi-pytorch-eW65GLDOKDO
+
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=2, padding=1):
         super().__init__()
@@ -36,11 +38,6 @@ class SpatialPath(nn.Module):
         x = self.conv2(x)
         x = self.conv3(x)
         return x
-
-# spatial_path = SpatialPath()
-# spatial_path = spatial_path.cpu()
-#
-# summary(spatial_path, (3, 256, 256))
 
 # Build context path
 class ContextPath(nn.Module):

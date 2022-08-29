@@ -1,5 +1,5 @@
 from networks import *
-
+from alive_progress import alive_bar
 args = get_args()
 
 # Config hyperparameter
@@ -61,28 +61,23 @@ wandb.init(project='Hair_segmentation', entity='khanghn')
 
 for epoch in range(start_epoch, EPOCHS):
     model.train()
-    tq = tqdm(total=len(dataloader_train) * BATCH_SIZE)
-    tq.set_description('\n Epoch {}/{}'.format(epoch, EPOCHS))
-
     loss_record = []
+    with alive_bar(total=len(dataloader_train), theme='musical', length=100) as bar:
+        for i, (data, label) in enumerate(dataloader_train):
+            data = data.to(DEVICE)
+            label = label.to(DEVICE)
+            output, output_sup1, output_sup2 = model(data)
+            loss1 = loss_func(output, label)
+            loss2 = loss_func(output_sup1, label)
+            loss3 = loss_func(output_sup2, label)
 
-    for i, (data, label) in enumerate(dataloader_train):
-        data = data.to(DEVICE)
-        label = label.to(DEVICE)
-        output, output_sup1, output_sup2 = model(data)
-        loss1 = loss_func(output, label)
-        loss2 = loss_func(output_sup1, label)
-        loss3 = loss_func(output_sup2, label)
-
-        # Combine 3 loss
-        loss = loss1 + loss2 + loss3
-        tq.update(BATCH_SIZE)
-        tq.set_postfix(loss='%.6f' % loss)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        loss_record.append(loss.item())
-    tq.close()
+            # Combine 3 loss
+            loss = loss1 + loss2 + loss3
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            loss_record.append(loss.item())
+            bar()
     loss_train_mean = np.mean(loss_record)
     print('loss for train : %f' % (loss_train_mean))
 

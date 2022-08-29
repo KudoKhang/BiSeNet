@@ -21,3 +21,4 @@ import wandb
 os.environ["WANDB_API_KEY"] = 'e7ed558aefc5cddf29d04c3037a712507b253521'
 import warnings
 warnings.filterwarnings('ignore')
+from alive_progress import alive_bar

@@ -92,8 +92,8 @@ def process_folder(path, output):
 
 if __name__ == '__main__':
     BSN = BSNPredict(pretrained='checkpoints/lastest_model_CeFiLa.pth')
-    # image('tests/test.jpg')
+    image('tests/test.jpg')
     # webcam()
     # record_video()
-    video('tests/nhi1.mp4', 'CeFiLa_')
+    # video('tests/kn.mp4', 'CeFiLa_')
     # time_inference('dataset/Figaro_1k/test/images/')

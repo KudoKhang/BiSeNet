@@ -1,5 +1,5 @@
 import numpy as np
-
+from alive_progress import alive_bar
 from .libs import *
 
 def reverse_one_hot(image):
@@ -52,21 +52,22 @@ def val(model, dataloader, NUM_CLASSES=2, device='cuda'):
     with torch.no_grad():
         model.eval()
         print('Starting validate...')
-
-        for i, (val_data, val_label) in tqdm(enumerate(dataloader)):
-            val_data = val_data.to(device)
-            val_label = val_label.to(device)
-            val_output = model(val_data).squeeze()
-            val_output = reverse_one_hot(val_output)
-            val_output_f1 = torch.clone(val_output)
-            val_output = np.array(val_output.cpu())
-            val_label = val_label.squeeze()
-            f1_score = f1_loss(val_label, val_output_f1)
-            val_label = np.array(val_label.cpu())
-            accuracy = compute_accuracy(val_output, val_label)
-            hist += fast_hist(val_label.flatten(), val_output.flatten(), NUM_CLASSES)
-            accuracy_arr.append(accuracy)
-            f1_arr.append(np.array(f1_score.cpu()))
+        with alive_bar(total=len(dataloader), theme='musical', length=100) as bar:
+            for i, (val_data, val_label) in enumerate(dataloader):
+                val_data = val_data.to(device)
+                val_label = val_label.to(device)
+                val_output = model(val_data).squeeze()
+                val_output = reverse_one_hot(val_output)
+                val_output_f1 = torch.clone(val_output)
+                val_output = np.array(val_output.cpu())
+                val_label = val_label.squeeze()
+                f1_score = f1_loss(val_label, val_output_f1)
+                val_label = np.array(val_label.cpu())
+                accuracy = compute_accuracy(val_output, val_label)
+                hist += fast_hist(val_label.flatten(), val_output.flatten(), NUM_CLASSES)
+                accuracy_arr.append(accuracy)
+                f1_arr.append(np.array(f1_score.cpu()))
+                bar()
         miou_list = per_class_iu(hist)[:-1]
         mean_accuracy, mean_iou, f1_score = np.mean(accuracy_arr), np.mean(miou_list), np.mean(f1_arr)
         print('Mean accuracy: {} -- Mean IoU: {} -- F1 Score: {}'.format(mean_accuracy, mean_iou, f1_score))

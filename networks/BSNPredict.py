@@ -1,8 +1,9 @@
 from networks import *
 
 class BSNPredict:
-    def __init__(self, NUM_CLASSES=2, pretrained='checkpoints/best_model_900.pth'):
+    def __init__(self, NUM_CLASSES=2, pretrained='checkpoints/best_model_900.pth', is_draw_bbox=False):
         self.NUM_CLASSES = NUM_CLASSES
+        self.is_draw_bbox = is_draw_bbox
         self.pretrained = pretrained
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = BiSeNet(num_classes=self.NUM_CLASSES)
@@ -63,7 +64,7 @@ class BSNPredict:
         return img
 
     def draw_bbox(self, img, t):
-        bbox = list(t[:, :5][np.where(t[:, 6] == 'person')][np.where(t[:, 4] > 0.7)])
+        bbox = list(t[:, :5][np.where(t[:, 6] == 'person')][np.where(t[:, 4] > 0.4)])
         for bb in bbox:
             x1, y1, x2, y2 = np.uint32(bb[:4])
             confident = bb[4]
@@ -76,10 +77,11 @@ class BSNPredict:
         t = np.array(results.pandas().xyxy[0])
         # bbox = list(np.int32(t[:, :4][np.where(t[:, 6] == 'person')][np.where(t[:,4] > 0.7)])) # Get person have condident score > 0.7
         bbox = list(np.int32(t[:, :4][np.where(t[:, 6] == 'person')]))
-        # self.draw_bbox(img, t)
+        if self.is_draw_bbox:
+            self.draw_bbox(img, t)
         return bbox
 
-    def predict(self, image_path, visualize=True):
+    def predict(self, image_path, visualize=False):
         img_ori = self.check_type(image_path)
         bbox = self.detect_person(img_ori)
         labels = np.zeros_like(img_ori)
