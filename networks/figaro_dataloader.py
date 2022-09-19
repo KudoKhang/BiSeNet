@@ -49,7 +49,7 @@ class FigaroDataset(Dataset):
         return "{}.{}".format(fname, 'png')
 
     def image_loader(self, data_path, label_path):
-        data = Image.open(data_path)
+        data = Image.open(data_path).convert('RGB')
         label = cv2.imread(label_path)
 
         return data, label

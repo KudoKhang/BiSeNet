@@ -1,7 +1,7 @@
 from alive_progress import alive_bar
 from networks import *
 
-# alive_bar just only terminal
+# alive_bar work only in terminal
 
 def webcam():
     print("Using webcam, press [q] to exit, press [s] to save")
@@ -92,7 +92,7 @@ def process_folder(path, output):
 
 if __name__ == '__main__':
     BSN = BSNPredict(pretrained='checkpoints/lastest_model_CeFiLa.pth')
-    image('tests/test.jpg')
+    image()
     # webcam()
     # record_video()
     # video('tests/kn.mp4', 'CeFiLa_')
