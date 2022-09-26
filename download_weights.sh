@@ -1,2 +1,2 @@
 !mkdir checkpoints
-!gdown 1KS-Vi1pRtQ5wTBcOFpPvxYy3txfvS5Fl -O checkpoints/lastest_model_CeFiLa.pth
+!gdown 1igAhgFWELyo5YLGQLRe_Q5PuA4CxyPhn -O checkpoints/lastest_model_CeFiLa.pth
