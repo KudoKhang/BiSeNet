@@ -7,6 +7,7 @@ import torch.utils.model_zoo as model_zoo
 from networks import *
 import cv2
 import time
+from tqdm import tqdm
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -37,8 +38,10 @@ def process_input(image_path):
     img = normalize(img).to(device)
     return img.unsqueeze(0)
 
-img = cv2.imread('dataset/Figaro_1k/test/images/226.jpg')
-img_processed = process_input(img)
+# img = cv2.imread('dataset/Figaro_1k/test/images/226.jpg')
+
+root = 'dataset/Figaro_1k/test/images/'
+list_img = [root + name for name in os.listdir(root) if name.endswith('jpg')]
 
 model = BiSeNet(num_classes=2)
 weight = "checkpoints/lastest_model_CeFiLa.pth"
@@ -46,20 +49,36 @@ model.load_state_dict(torch.load(weight, map_location=torch.device(device))['sta
 model = model.to(device)
 model.eval()
 
-start = time.time()
-torch_out = model(img_processed)
-print("Time Inference PYTORCH: ", time.time() - start)
 
 session = onnxruntime.InferenceSession("checkpoints/bisenet.onnx")
 
-# compute ONNX Runtime output prediction
-start = time.time()
-ort_inputs = {session.get_inputs()[0].name: to_numpy(img_processed)}
-ort_outs = session.run(None, ort_inputs)
-print("Time Inference ONNX", time.time() - start)
+time_inference_model = []
+time_inference_onnx_model = []
 
-out = torch.from_numpy(ort_outs[0])
-label = process_output(out, img)
+for path in tqdm(list_img):
+    img = cv2.imread(path)
+    img_processed = process_input(img)
 
-cv2.imshow('results', label)
-cv2.waitKey(0)
+    start = time.time()
+    torch_out = model(img_processed)
+    end_model = time.time() - start
+    time_inference_model.append(end_model)
+
+    # compute ONNX Runtime output prediction
+    start = time.time()
+    ort_inputs = {session.get_inputs()[0].name: to_numpy(img_processed)}
+    ort_outs = session.run(None, ort_inputs)
+    end_onnx_model = time.time() - start
+    time_inference_onnx_model.append(end_onnx_model)
+    # out = torch.from_numpy(ort_outs[0])
+    # label = process_output(out, img)
+
+    # cv2.imshow('results', label)
+    # cv2.waitKey(0)
+
+t_model = sum(time_inference_model) / len(time_inference_model)
+t_onnx_model = sum(time_inference_onnx_model) / len(time_inference_onnx_model)
+
+print('Time inference model PyTorch:', t_model)
+print('Time inference model ONNX:', t_onnx_model)
+print(f'ONNX inference faster {round(t_model / t_onnx_model, 2)} times than PyTorch')

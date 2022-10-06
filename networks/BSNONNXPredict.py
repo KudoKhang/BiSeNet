@@ -38,7 +38,7 @@ class BSNONNXPredict:
         label = np.array(label.cpu(), dtype='uint8')
         label = (1 - label) * 255
         label = cv2.resize(label, img.shape[:2][::-1])
-        # label = self.shift(label)
+        label = self.shift(label)
         return label
 
     def process_input(self, image_path):
