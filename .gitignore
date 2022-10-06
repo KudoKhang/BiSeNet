@@ -9,7 +9,7 @@ dataset/
 *__pycache__
 results/
 *.pt
-test.py
+inferenceONNX.py
 wandb/
 tests/
 test_alivebar.py

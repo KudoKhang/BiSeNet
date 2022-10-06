@@ -48,5 +48,5 @@ if __name__ == "__main__":
     weight = "checkpoints/lastest_model_CeFiLa.pth"
     model.load_state_dict(torch.load(weight, map_location=torch.device(device))['state_dict'])
     model = model.to(device)
-    # Convert_ONNX()
-    check_model('checkpoints/bisenet.onnx')
+    Convert_ONNX()
+    # check_model('checkpoints/bisenet.onnx')
