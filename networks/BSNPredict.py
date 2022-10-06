@@ -45,7 +45,7 @@ class BSNPredict:
         label = cv2.resize(label, img.shape[:2][::-1])
         return label
 
-    def visualize(self,img, label, color = (0, 255, 0)):
+    def visualize(self, img, label, color = (0, 255, 0)):
         if color:
             label[:,:,0][np.where(label[:,:,0]==255)] = color[0]
             label[:,:,1][np.where(label[:,:,1]==255)] = color[1]

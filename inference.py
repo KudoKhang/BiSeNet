@@ -81,7 +81,7 @@ def time_inference(root):
 
 def image(path='dataset/Figaro_1k/test/images/971.jpg'):
     start = time.time()
-    img = BSN.predict(path)
+    img = BSN.predict(path, visualize=True)
     print('Time inference: ', round((time.time() - start) * 1e3, 2), 'ms')
     cv2.imshow('BiSeNet Predict', img)
     cv2.waitKey(0)
@@ -91,8 +91,8 @@ def process_folder(path, output):
 #--------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    BSN = BSNPredict(pretrained='checkpoints/lastest_model_CeFiLa.pth')
-    image()
+    BSN = BSNPredict(pretrained='checkpoints/best_model_CeFiLaIb.pth')
+    image('dataset/Figaro_1k/test/images/568.jpg')
     # webcam()
     # record_video()
     # video('tests/kn.mp4', 'CeFiLa_')

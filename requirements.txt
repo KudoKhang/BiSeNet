@@ -4,3 +4,6 @@ torchsummary
 torchvision
 glob2
 alive_progress
+onnx
+onnxruntime
+onnxruntime-gpu
