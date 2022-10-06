@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 from networks import *
@@ -40,13 +42,26 @@ class BSNPredict:
     def predict(self, image: np.ndarray, bbox):
         labels = np.zeros_like(image)
         temp_label = labels.copy()
+        bbox_empty = [np.array([0, 0, image.shape[1], image.shape[0]])]
+        bbox = bbox if len(bbox) > 0 else bbox_empty # if no person detected --> return original image
         for bb in bbox:
+            start_pre_process = time.time()
             x1, y1, x2, y2 = bb
             person = image[y1: y2, x1: x2]
-            label = self.model(self.process_input(person.copy()))
+            image_processed = self.process_input(person.copy())
+            pre_process_time = str(round((time.time() - start_pre_process) * 1e3, 2)) + 'ms'
+
+            start_model = time.time()
+            label = self.model(image_processed)
+            model_inference_time = str(round((time.time() - start_model) * 1e3, 2)) + 'ms'
+
+            start_post_process = time.time()
             label = self.process_output(label, person)
             temp_label[y1:y2, x1:x2] = label
             labels += temp_label
+            post_process_time = str(round((time.time() - start_post_process) * 1e3, 2)) + 'ms'
+
         _, labels = cv2.threshold(labels, 20, 255, cv2.THRESH_BINARY)
-        return labels
+
+        return labels, pre_process_time, model_inference_time, post_process_time
 
