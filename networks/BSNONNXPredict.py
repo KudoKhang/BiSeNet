@@ -13,19 +13,6 @@ class BSNONNXPredict:
     def to_numpy(self, tensor):
         return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
-    def shift(self, image, shift_x=22, shift_y=10):
-        shift_to_right_or_down = 1
-        shift_to_left_or_top = -1
-        for i in range(image.shape[1] - 1, image.shape[1] - shift_x, -1):
-            image = np.roll(image, shift_to_right_or_down, axis=1)
-            image[:, -1] = 0
-
-        for i in range(image.shape[0] - 1, image.shape[0] - shift_y, -1):
-            image = np.roll(image, 1, axis=0)
-            image[-1, :] = 0
-
-        return image
-
     def reverse_one_hot(self, image):
         # Convert output of model to predicted class
         image = image.permute(1, 2, 0)
@@ -38,7 +25,6 @@ class BSNONNXPredict:
         label = np.array(label.cpu(), dtype='uint8')
         label = (1 - label) * 255
         label = cv2.resize(label, img.shape[:2][::-1])
-        label = self.shift(label)
         return label
 
     def process_input(self, image_path):
@@ -70,13 +56,13 @@ class BSNONNXPredict:
             label[:,:,2][np.where(label[:,:,2]==255)] = color[2]
         return cv2.addWeighted(img, 0.6, label, 0.4, 0)
 
-    def predict(self, image, is_visualize=True):
+    def predict(self, image, visualize=True):
         image_processed = self.process_input(image)
         inputs = {self.model.get_inputs()[0].name: self.to_numpy(image_processed)}
         outputs = self.model.run(None, inputs)
         mask = self.process_output(outputs, image)
 
-        if is_visualize:
+        if visualize:
             mask = self.visualize(image, mask)
 
         return mask

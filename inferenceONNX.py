@@ -1,7 +1,7 @@
 from networks import *
 
 # predictor = BSNONNXPredict(pretrained='checkpoints/bisenet_no_opt.onnx')
-predictor = BSNONNXPredict()
+predictor = BSNONNXPredict(pretrained='checkpoints/bisenet.onnx')
 
 root = 'dataset/Figaro_1k/test/images/'
 list_path = [root + name for name in os.listdir(root) if name.endswith(('jpg'))]
@@ -11,7 +11,7 @@ list_path = [root + name for name in os.listdir(root) if name.endswith(('jpg'))]
 #     cv2.imshow('result', result)
 #     cv2.waitKey(0)
 
-img = cv2.imread(root + '568.jpg')
+img = cv2.imread(root + '959.jpg')
 result = predictor.predict(img)
 cv2.imshow('result', result)
 cv2.waitKey(0)
