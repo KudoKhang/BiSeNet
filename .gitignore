@@ -13,3 +13,4 @@ inferenceONNX.py
 wandb/
 tests/
 test_alivebar.py
+*.pyc
