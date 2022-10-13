@@ -72,13 +72,13 @@ class BSNPredict:
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
     def detect_person(self, img):
-        # TODO: FIX CASE NO PERSON
         results = self.model_detect_person(img)
         t = np.array(results.pandas().xyxy[0])
         # bbox = list(np.int32(t[:, :4][np.where(t[:, 6] == 'person')][np.where(t[:,4] > 0.7)])) # Get person have condident score > 0.7
         bbox = list(np.int32(t[:, :4][np.where(t[:, 6] == 'person')]))
         if self.is_draw_bbox:
             self.draw_bbox(img, t)
+        bbox = bbox if len(bbox) > 0 else [[0, 0, img.shape[1], img.shape[0]]]
         return bbox
 
     def predict(self, image_path, visualize=False):
